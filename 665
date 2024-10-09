@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int main() {
+    int fd1 = open("output.txt", O_RDONLY);
+    if (fd1 == -1) {
+        perror("Не удалось открыть файл для чтения");
+        return 1;
+    }
+
+    int fd2 = dup(fd1);
+    int fd3 = open("output.txt", O_RDONLY);
+    
+    printf("Хэндлы: fd1 = %d, fd2 = %d, fd3 = %d\n", fd1, fd2, fd3);
+
+    lseek(fd1, 10, SEEK_SET);
+
+    char buffer1[8], buffer2[8], buffer3[8];
+    read(fd1, buffer1, 7);
+    read(fd2, buffer2, 7);
+    read(fd3, buffer3, 7);
+
+    printf("Содержимое из fd1: %.*s\n", 7, buffer1);
+    printf("Содержимое из fd2: %.*s\n", 7, buffer2);
+    printf("Содержимое из fd3: %.*s\n", 7, buffer3);
+
