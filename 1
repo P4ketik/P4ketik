@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+int main() {
+    char buffer[256];
+    
+    // Проверка на перенаправление
+    if (isatty(fileno(stdin))) {
+        write(STDOUT_FILENO, "Введите текст: ", 15);
+    }
+    
+    ssize_t bytesRead = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
+    buffer[bytesRead] = '\0'; // Завершение строки
+    
+    if (isatty(fileno(stdout))) {
+        write(STDOUT_FILENO, "Вы ввели: ", 10);
+    }
+    write(STDOUT_FILENO, buffer, bytesRead);
+    
+    return 0;
+}
