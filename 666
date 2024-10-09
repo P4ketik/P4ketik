@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    FILE *file = fopen("output.txt", "w");
+    if (!file) {
+        perror("Не удалось открыть файл для записи");
+        return 1;
+    }
+
+    char buffer[256];
+    printf("Введите текст (для завершения ввода введите 'exit'):\n");
+    while (fgets(buffer, sizeof(buffer), stdin)) {
+        if (strncmp(buffer, "exit", 4) == 0) {
+            break;
+        }
+        fputs(buffer, file);
+    }
+
+    fclose(file);
+    return 0;
+}
