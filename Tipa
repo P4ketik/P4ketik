@@ -1,0 +1,77 @@
+ChatGPT
+Для выполнения вашей задачи вам нужно создать две программы на C.
+
+Первая программа (write_to_file.c):
+
+c
+Копировать код
+#include <stdio.h>
+
+int main() {
+    FILE *file = fopen("output.txt", "w");
+    if (!file) {
+        perror("Не удалось открыть файл");
+        return 1;
+    }
+    
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), stdin)) {
+        fputs(buffer, file);
+    }
+    
+    fclose(file);
+    return 0;
+}
+Эта программа открывает файл output.txt для записи и копирует данные из стандартного ввода в файл.
+
+Вторая программа (read_from_file.c):
+
+c
+Копировать код
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int main() {
+    int fd1 = open("output.txt", O_RDONLY);
+    if (fd1 < 0) {
+        perror("Не удалось открыть файл");
+        return 1;
+    }
+
+    int fd2 = dup(fd1);
+    int fd3 = open("output.txt", O_RDONLY);
+
+    lseek(fd1, 10, SEEK_SET); // Перемещаем указатель на 10-ю позицию
+
+    char buffer1[8], buffer2[8], buffer3[8];
+
+    printf("Хэндлы: %d, %d, %d\n", fd1, fd2, fd3);
+
+    read(fd1, buffer1, 7);
+    read(fd2, buffer2, 7);
+    read(fd3, buffer3, 7);
+
+    buffer1[7] = '\0'; // Завершаем строку
+    buffer2[7] = '\0'; // Завершаем строку
+    buffer3[7] = '\0'; // Завершаем строку
+
+    printf("%s\n%s\n%s\n", buffer1, buffer2, buffer3);
+
+    close(fd1);
+    close(fd2);
+    close(fd3);
+    return 0;
+}
+Эта программа открывает output.txt, создает дубликат хэндла и снова открывает файл. Она перемещает указатель на 10-ю позицию и считывает по 7 символов из каждого хэндла.
+
+Объяснение вывода:
+
+Выводятся значения трех хэндлов.
+Считываемые данные могут отличаться, так как каждый хэндл может находиться на разных позициях, особенно если используется lseek() для перемещения указателя.
+Скомпилируйте и запустите обе программы, чтобы получить результаты.
+
+
+
+
+ChatGPT может допускать ошибки. Рекомендуем проверять важную информацию.
